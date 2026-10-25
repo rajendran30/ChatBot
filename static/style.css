@@ -76,6 +76,64 @@ body {
   font-size: 0.95rem;
 }
 
+.guidance {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  padding: 20px 24px;
+  gap: 12px;
+}
+
+.guidance-controls {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.guidance-controls label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.guidance-controls select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+.table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.data-table th,
+.data-table td {
+  text-align: left;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.data-table th {
+  background: var(--panel);
+  color: var(--muted);
+  position: sticky;
+  top: 0;
+}
+
 .layout {
   display: flex;
   flex: 1;

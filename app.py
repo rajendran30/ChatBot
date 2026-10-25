@@ -5,6 +5,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from flask import Flask, jsonify, render_template, request, session
 
+from db.inspector import fetch_table_rows, list_tables
 from rag.chat import answer_question
 from rag.config import ALLOWED_EXTENSIONS, DOCUMENTS_DIR
 from rag.indexer import build_index, load_or_build_index
@@ -49,6 +50,25 @@ def upload():
     DOCUMENTS_DIR.mkdir(parents=True, exist_ok=True)
     file.save(DOCUMENTS_DIR / filename)
     return jsonify({"status": "uploaded", "filename": filename})
+
+
+@app.route("/api/guidance/tables")
+def guidance_tables():
+    try:
+        return jsonify({"tables": list_tables()})
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+
+
+@app.route("/api/guidance/tables/<table_name>")
+def guidance_table_rows(table_name):
+    try:
+        columns, rows = fetch_table_rows(table_name)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 404
+    except Exception as exc:
+        return jsonify({"error": str(exc)}), 500
+    return jsonify({"table": table_name, "columns": columns, "rows": rows})
 
 
 @app.route("/api/chat", methods=["POST"])

@@ -4,7 +4,78 @@ document.querySelectorAll(".tab-btn").forEach((btn) => {
     document.querySelectorAll(".tab-panel").forEach((p) => p.classList.remove("active"));
     btn.classList.add("active");
     document.getElementById(`tab-${btn.dataset.tab}`).classList.add("active");
+    if (btn.dataset.tab === "guidance-guru") {
+      loadGuidanceTables();
+    }
   });
+});
+
+const tableSelect = document.getElementById("table-select");
+const tableStatus = document.getElementById("table-status");
+const tableHead = document.getElementById("table-head");
+const tableBody = document.getElementById("table-body");
+let guidanceTablesLoaded = false;
+
+async function loadGuidanceTables() {
+  if (guidanceTablesLoaded) return;
+  guidanceTablesLoaded = true;
+  tableStatus.textContent = "Loading tables…";
+  try {
+    const res = await fetch("/api/guidance/tables");
+    const data = await res.json();
+    if (!res.ok) {
+      tableStatus.textContent = data.error || "Unable to load tables.";
+      return;
+    }
+    data.tables.forEach((name) => {
+      const option = document.createElement("option");
+      option.value = name;
+      option.textContent = name;
+      tableSelect.appendChild(option);
+    });
+    tableStatus.textContent = data.tables.length ? "" : "No tables found.";
+  } catch (err) {
+    tableStatus.textContent = "Unable to load tables — is the database running?";
+    guidanceTablesLoaded = false;
+  }
+}
+
+tableSelect.addEventListener("change", async () => {
+  const tableName = tableSelect.value;
+  tableHead.innerHTML = "";
+  tableBody.innerHTML = "";
+  if (!tableName) return;
+
+  tableStatus.textContent = "Loading records…";
+  try {
+    const res = await fetch(`/api/guidance/tables/${encodeURIComponent(tableName)}`);
+    const data = await res.json();
+    if (!res.ok) {
+      tableStatus.textContent = data.error || "Unable to load records.";
+      return;
+    }
+
+    data.columns.forEach((col) => {
+      const th = document.createElement("th");
+      th.textContent = col;
+      tableHead.appendChild(th);
+    });
+
+    data.rows.forEach((row) => {
+      const tr = document.createElement("tr");
+      data.columns.forEach((col) => {
+        const td = document.createElement("td");
+        const value = row[col];
+        td.textContent = value === null || value === undefined ? "" : value;
+        tr.appendChild(td);
+      });
+      tableBody.appendChild(tr);
+    });
+
+    tableStatus.textContent = data.rows.length ? `${data.rows.length} row(s)` : "No records in this table.";
+  } catch (err) {
+    tableStatus.textContent = "Unable to load records — network error.";
+  }
 });
 
 const messagesEl = document.getElementById("messages");

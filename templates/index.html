@@ -50,7 +50,23 @@
     </section>
 
     <section class="tab-panel" id="tab-guidance-guru">
-      <div class="placeholder">Guidance Guru — coming soon.</div>
+      <div class="guidance">
+        <div class="guidance-controls">
+          <label for="table-select">Table</label>
+          <select id="table-select">
+            <option value="">Select a table…</option>
+          </select>
+        </div>
+        <div id="table-status" class="status"></div>
+        <div class="table-wrap">
+          <table id="table-view" class="data-table">
+            <thead>
+              <tr id="table-head"></tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </div>
     </section>
 
     <section class="tab-panel" id="tab-solution-mate">
